@@ -1,0 +1,101 @@
+body{
+font-family:sans-serif;
+margin:0;
+background:#fff8f0
+}
+
+header,footer{
+background:#8b0000;
+color:white;
+padding:15px;
+text-align:center
+}
+
+nav{
+display:flex;
+justify-content:center;
+align-items:center;
+flex-wrap:nowrap;        /* บังคับให้อยู่บรรทัดเดียว */
+gap:8px;
+overflow-x:auto;         /* มือถือเลื่อนซ้ายขวาได้ถ้าจอแคบ */
+}
+
+nav button{
+white-space:nowrap;      /* ไม่ตัดคำ */
+padding:8px 12px;
+font-size:14px;
+}
+
+.container{
+padding:15px
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 2px 6px rgba(0,0,0,.1)
+}
+
+.menu{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px
+}
+
+.menu .card{
+font-size:14px
+}
+
+input,textarea,button{
+width:100%;
+padding:8px;
+margin-top:6px;
+font-size:15px
+}
+
+.qty-box{
+display:flex;
+gap:5px;
+align-items:center
+}
+
+.qty-box button{
+width:35px;
+height:35px;
+font-size:18px
+}
+
+textarea{
+resize:none
+}
+
+.hidden{display:none}
+
+/* มือถือเล็กมาก */
+@media(max-width:400px){
+.menu{
+grid-template-columns:1fr;
+}
+}
+
+.tabs{
+display:flex;
+gap:10px;
+margin-bottom:15px
+}
+
+.tabs button{
+flex:1;
+padding:10px;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+background:#ddd
+}
+
+.tabs button.active{
+background:#ff9800;
+color:white
+}

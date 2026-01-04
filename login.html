@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>เข้าสู่ระบบ | เลิศรสโรตี</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8b0000">
+
+</head>
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+<body>
+
+<header>
+<h1>เลิศรสโรตี</h1>
+</header>
+
+<div class="container">
+<div class="card">
+<h2>สมัครสมาชิก / ล็อกอิน</h2>
+<input id="user" placeholder="ชื่อผู้ใช้">
+<input id="pass" type="password" placeholder="รหัสผ่าน">
+<button onclick="register()">สมัครสมาชิก</button>
+<button onclick="login()">ล็อกอิน</button>
+</div>
+</div>
+
+<footer>
+<p>ที่อยู่ร้าน: ถนนโรตี อำเภออร่อย จังหวัดหิว</p>
+<p>โทร: 099-999-9999</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>เลิศรสโรตี</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8b0000">
+
+</head>
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+<body onload="checkCustomer()">
+
+<header>
+<h1>เลิศรสโรตี</h1>
+<nav>
+<button onclick="showPage('menu')">เมนู</button>
+<button onclick="showPage('cart')">ตะกร้า</button>
+<button onclick="showPage('orders')">คำสั่งซื้อ</button>
+<button onclick="logout()">ออกจากระบบ</button>
+</nav>
+</header>
+
+<div class="container">
+
+<!-- เมนู -->
+<div id="menu">
+  <h2>เมนูโรตี</h2>
+  <div class="menu" id="menuList"></div>
+</div>
+
+<!-- ตะกร้า -->
+<div id="cart" class="hidden">
+<h2>ตะกร้าสินค้า</h2>
+<div id="cartList"></div>
+<h3 id="total"></h3>
+<button onclick="checkout()">สั่งซื้อ</button>
+</div>
+
+<!-- ชำระเงิน -->
+<div id="payment" class="hidden">
+<h2>ชำระเงิน</h2>
+<p>สแกน QR เพื่อชำระเงิน</p>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PromptPay123456">
+<button onclick="confirmPayment()">ยืนยันชำระเงิน</button>
+</div>
+
+<!-- คำสั่งซื้อ -->
+<div id="orders" class="hidden">
+<h2>รายการคำสั่งซื้อ</h2>
+<div id="orderList"></div>
+</div>
+
+</div>
+
+<footer>
+<p>ที่อยู่ร้าน: ถนนโรตี อำเภออร่อย จังหวัดหิว</p>
+<p>โทร: 099-999-9999</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
