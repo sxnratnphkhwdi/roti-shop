@@ -151,36 +151,66 @@ function loadOrders(){
 }
 
 function register(){
-let u=user.value, p=pass.value;
-if(!u||!p) return alert("กรอกข้อมูลให้ครบ");
+  let u = user.value;
+  let p = pass.value;
 
-let users = JSON.parse(localStorage.getItem("users") || "{}");
-if(users[u]) return alert("มีผู้ใช้นี้แล้ว");
+  if(!u || !p){
+    alert("กรอกข้อมูลให้ครบ");
+    return;
+  }
 
-users[u] = p;
-localStorage.setItem("users", JSON.stringify(users));
+  let users = JSON.parse(localStorage.getItem("users") || "{}");
 
-alert("สมัครสมาชิกเรียบร้อยแล้ว ✅ กรุณาล็อกอิน");
-user.value="";
-pass.value="";
+  if(users[u]){
+    alert("มีผู้ใช้นี้แล้ว");
+    return;
+  }
+
+  users[u] = p;
+
+  localStorage.setItem("users", JSON.stringify(users));
+
+  alert("สมัครสมาชิกเรียบร้อยแล้ว ✅ กรุณาล็อกอิน");
+
+  user.value = "";
+  pass.value = "";
+
+  if(u==="admin"){
+  alert("ไม่สามารถใช้ชื่อนี้ได้");
+  return;
+    }
 }
+
 function login(){
-let u=user.value, p=pass.value;
+  let u = user.value.trim();
+  let p = pass.value.trim();
 
-if(u==="admin" && p==="admin123"){
-localStorage.setItem("currentUser","admin");
-alert("เข้าสู่ระบบแอดมิน");
-location.href="admin.html";   // 👉 แอดมินไปหน้านี้
-return;
+  if(!u || !p){
+    alert("กรอกชื่อผู้ใช้และรหัสผ่าน");
+    return;
+  }
+
+  // 🔐 แอดมิน
+  if(u==="admin" && p==="admin123"){
+    localStorage.setItem("currentUser","admin");
+    alert("เข้าสู่ระบบแอดมิน");
+    location.href="admin.html";
+    return;
+  }
+
+  // 👤 ลูกค้า
+  let users = JSON.parse(localStorage.getItem("users") || "{}");
+
+  if(users[u] !== p){
+    alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
+    return;
+  }
+
+  localStorage.setItem("currentUser", u);
+  alert("เข้าสู่ระบบสำเร็จ");
+  location.href="index.html";
 }
 
-let users = JSON.parse(localStorage.getItem("users") || "{}");
-if(users[u] !== p) return alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
-
-localStorage.setItem("currentUser",u);
-alert("เข้าสู่ระบบสำเร็จ");
-location.href="index.html";    // 👉 ลูกค้าไปหน้านี้
-}
 
 function updateStatus(index){
 let orders = JSON.parse(localStorage.getItem("orders"));
