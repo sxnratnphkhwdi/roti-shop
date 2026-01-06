@@ -13,7 +13,7 @@ if("serviceWorker" in navigator){
   navigator.serviceWorker.register("service-worker.js");
 }
 </script>
-<body onload="checkLogin()">
+<body onload="checkLogin(); loadMenu();">
 
 <header>
 <h1>เลิศรสโรตี</h1>
@@ -30,7 +30,7 @@ if("serviceWorker" in navigator){
 <!-- เมนู -->
 <div id="menu">
   <h2>เมนูโรตี</h2>
-  <div class="menu" id="menuList"></div>
+  <div class="menu-grid" id="menuList"></div>
 </div>
 
 <!-- ตะกร้า -->
