@@ -320,6 +320,7 @@ function checkLogin(){
   }
 }
 
+
 // 🔐 ตรวจเฉพาะแอดมิน
 function checkAdmin(){
   let u = localStorage.getItem("currentUser");
@@ -363,4 +364,50 @@ function startAdminWatcher(){
       }
     }
   },3000); // เช็กทุก 3 วินาที
+}
+function placeOrder(){
+  let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+
+  orders.push({
+    user: localStorage.getItem("currentUser"),
+    items: cart,
+    total: totalPrice,
+    status: "กำลังทำ",
+    date: new Date().toLocaleString("th-TH")
+  });
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+
+  cart = [];
+  localStorage.setItem("cart","[]");
+
+  alert("สั่งซื้อเรียบร้อย");
+}
+function loadOrders(){
+  let currentUser = localStorage.getItem("currentUser");
+  let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+  let box = document.getElementById("orderList");
+  if(!box) return;
+
+  box.innerHTML = "";
+
+  if(orders.length === 0){
+    box.innerHTML = "<p>ยังไม่มีคำสั่งซื้อ</p>";
+    return;
+  }
+
+  orders.forEach((o,i)=>{
+    // 👉 แอดมินเห็นทุกออเดอร์
+    if(currentUser !== "admin" && o.user !== currentUser) return;
+
+    box.innerHTML += `
+      <div class="card">
+        <b>ลูกค้า:</b> ${o.user}<br>
+        <b>เวลา:</b> ${o.date}<br>
+        <b>สถานะ:</b> ${o.status}<br>
+        <hr>
+        ${o.items.map(it=>`${it.name} x${it.qty}`).join("<br>")}
+      </div>
+    `;
+  });
 }
