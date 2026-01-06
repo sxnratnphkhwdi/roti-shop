@@ -312,3 +312,55 @@ o.user===order.user &&
 o.date===order.date
 );
 }
+// 🔐 ตรวจว่าล็อกอินหรือยัง (ลูกค้า)
+function checkLogin(){
+  let u = localStorage.getItem("currentUser");
+  if(!u){
+    location.href="login.html";
+  }
+}
+
+// 🔐 ตรวจเฉพาะแอดมิน
+function checkAdmin(){
+  let u = localStorage.getItem("currentUser");
+  if(u !== "admin"){
+    location.href="login.html";
+  }
+}
+
+// 🚪 ออกจากระบบ
+function logout(){
+  localStorage.removeItem("currentUser");
+  location.href="login.html";
+}
+// 🔔 แจ้งเตือนออเดอร์ใหม่ (แอดมิน)
+let lastOrderCount = Number(localStorage.getItem("lastOrderCount") || 0);
+
+function startAdminWatcher(){
+
+  // ขออนุญาตแจ้งเตือน
+  if(Notification.permission !== "granted"){
+    Notification.requestPermission();
+  }
+
+  setInterval(()=>{
+    let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+
+    if(orders.length > lastOrderCount){
+      let newOrders = orders.length - lastOrderCount;
+
+      new Notification("📢 ออเดอร์ใหม่!",{
+        body:`มีออเดอร์ใหม่ ${newOrders} รายการ`,
+        icon:"icons/icon-192.png"
+      });
+
+      lastOrderCount = orders.length;
+      localStorage.setItem("lastOrderCount", lastOrderCount);
+
+      // รีเฟรชรายการออเดอร์
+      if(typeof loadOrders === "function"){
+        loadOrders();
+      }
+    }
+  },3000); // เช็กทุก 3 วินาที
+}
