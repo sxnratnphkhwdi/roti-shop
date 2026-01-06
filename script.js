@@ -298,3 +298,4 @@ function startAdminWatcher(){
   },3000);
 }
 
+function showPage(page){ ["menu","cart","payment","orders"] .forEach(p=>document.getElementById(p).classList.add("hidden")); document.getElementById(page).classList.remove("hidden"); if(page==="cart") showCart(); if(page==="orders") loadOrders(); }
