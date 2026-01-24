@@ -24,51 +24,85 @@ function register(){
   let u = user.value.trim();
   let p = pass.value.trim();
 
-  if(!u || !p) return alert("กรอกข้อมูลให้ครบ");
-  if(u === "admin") return alert("ไม่สามารถใช้ชื่อนี้ได้");
+  if(!u || !p){
+    alert("กรอกข้อมูลให้ครบ");
+    return;
+  }
+
+  if(u === "admin"){
+    alert("ไม่สามารถใช้ชื่อนี้ได้");
+    return;
+  }
 
   let users = JSON.parse(localStorage.getItem("users") || "{}");
-  if(users[u]) return alert("มีผู้ใช้นี้แล้ว");
+
+  if(users[u]){
+    alert("มีผู้ใช้นี้แล้ว");
+    return;
+  }
 
   users[u] = p;
   localStorage.setItem("users", JSON.stringify(users));
 
-  alert("สมัครสมาชิกเรียบร้อยแล้ว ✅ กรุณาล็อกอิน");
+  // ✅ แจ้งเตือนสมัครสำเร็จ
+  alert("สมัครสมาชิกสำเร็จ 🎉 กรุณาล็อกอิน");
+
   user.value = "";
   pass.value = "";
 }
+
 
 function login(){
   let u = user.value.trim();
   let p = pass.value.trim();
 
-  if(!u || !p) return alert("กรอกชื่อผู้ใช้และรหัสผ่าน");
+  if(!u || !p){
+    alert("กรอกชื่อผู้ใช้และรหัสผ่าน");
+    return;
+  }
 
+  // 🔐 แอดมิน
   if(u === "admin" && p === "admin123"){
     localStorage.setItem("currentUser","admin");
+    alert("เข้าสู่ระบบแอดมิน");
     location.href = "admin.html";
     return;
   }
 
+  // 👤 ลูกค้า
   let users = JSON.parse(localStorage.getItem("users") || "{}");
-  if(users[u] !== p) return alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
 
+  if(users[u] !== p){
+    alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
+    return;
+  }
+
+  // ✅ เก็บสถานะล็อกอิน
   localStorage.setItem("currentUser", u);
+
+  alert("เข้าสู่ระบบสำเร็จ ✅");
   location.href = "index.html";
 }
+
 
 function logout(){
   localStorage.removeItem("currentUser");
   location.href = "login.html";
 }
 
+
 function checkCustomer(){
-  if(!currentUser || currentUser === "admin"){
+  let u = localStorage.getItem("currentUser");
+
+  if(!u || u === "admin"){
     location.href = "login.html";
     return;
   }
+
+  currentUser = u;   // ⭐ สำคัญ
   loadMenu();
 }
+
 
 function checkAdmin(){
   if(currentUser !== "admin"){
@@ -86,23 +120,37 @@ function loadMenu(){
   if(!menuList) return;
 
   menuList.innerHTML = "";
+
   menus.forEach((m,i)=>{
     menuList.innerHTML += `
-    <div class="card">
-      <h3>${m.name}</h3>
-      <p>${m.price} บาท</p>
+<div class="bg-white rounded-2xl shadow-md p-4 flex flex-col gap-2 hover:shadow-xl transition">
+  <h3 class="font-semibold text-lg">${m.name}</h3>
+  <p class="text-red-600 font-bold">${m.price} บาท</p>
 
-      <div class="qty-box">
-        <button onclick="changeQty(${i},-1)">-</button>
-        <span id="qty${i}">1</span>
-        <button onclick="changeQty(${i},1)">+</button>
-      </div>
+  <div class="flex items-center justify-between">
+    <button class="px-3 py-1 bg-gray-100 rounded"
+      onclick="changeQty(${i},-1)">−</button>
 
-      <textarea id="note${i}" placeholder="หมายเหตุ"></textarea>
-      <button onclick="addCart(${i})">เพิ่มลงตะกร้า</button>
-    </div>`;
+    <span id="qty${i}" class="font-bold">1</span>
+
+    <button class="px-3 py-1 bg-gray-100 rounded"
+      onclick="changeQty(${i},1)">+</button>
+  </div>
+
+  <textarea id="note${i}"
+    class="border rounded-lg p-2 text-sm"
+    placeholder="หมายเหตุ เช่น ไม่ใส่นม"></textarea>
+
+  <button onclick="addCart(${i})"
+    class="bg-red-600 text-white py-2 rounded-xl hover:bg-red-700">
+    เพิ่มลงตะกร้า
+  </button>
+</div>
+`;
+
   });
 }
+
 
 function changeQty(i,val){
   qty[i] = (qty[i] || 1) + val;
@@ -142,12 +190,13 @@ function showCart(){
     let t = c.price * c.qty;
     sum += t;
     cartList.innerHTML += `
-      <div class="card">
+    <div class="bg-white rounded-xl shadow p-4 mb-3">
         <b>${c.name}</b><br>
         จำนวน: ${c.qty}<br>
         หมายเหตุ: ${c.note || "-"}<br>
         รวม: ${t} บาท
-      </div>`;
+    </div>  
+    `;
   });
 
   totalEl.innerText = "รวมทั้งหมด " + sum + " บาท";
