@@ -2,7 +2,7 @@
  * GLOBAL
  ***************/
 let currentUser = localStorage.getItem("currentUser");
-let cart = [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let totalPrice = 0;
 
 const menus = [
@@ -170,6 +170,8 @@ function addCart(i){
     note: note
   });
 
+  localStorage.setItem("cart", JSON.stringify(cart));
+  
   alert("เพิ่มสินค้าแล้ว");
   qty[i] = 1;
   document.getElementById("qty"+i).innerText = 1;
@@ -418,3 +420,27 @@ function showPage(page){
   }
 }
 
+function showPage(pageId) {
+  document.querySelectorAll("section, div[id]").forEach(el => {
+    if (el.id === pageId) {
+      el.classList.remove("hidden");
+    } else if (["menu","cart","payment","orders"].includes(el.id)) {
+      el.classList.add("hidden");
+    }
+  });
+}
+
+function checkout() {
+  if (cart.length === 0) {
+    alert("❌ ยังไม่มีสินค้าในตะกร้า");
+    return;
+  }
+
+  // คำนวณยอด
+  let total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  document.getElementById("paymentTotal").innerText =
+    total + " บาท";
+
+  showPage("payment");
+}
