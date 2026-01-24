@@ -3,6 +3,7 @@
  ***************/
 let currentUser = localStorage.getItem("currentUser");
 let cart = [];
+let totalPrice = 0;
 
 const menus = [
   { name:"โรตีธรรมดา", price:10 },
@@ -181,48 +182,75 @@ function addCart(i){
 function showCart(){
   let cartList = document.getElementById("cartList");
   let totalEl = document.getElementById("total");
-  if(!cartList) return;
 
   cartList.innerHTML = "";
-  let sum = 0;
+  totalPrice = 0;
 
-  cart.forEach(c=>{
-    let t = c.price * c.qty;
-    sum += t;
+  if(cart.length === 0){
+    cartList.innerHTML = "<p class='text-center text-gray-500'>ยังไม่มีสินค้าในตะกร้า</p>";
+    totalEl.innerText = "";
+    return;
+  }
+
+  cart.forEach((c,index)=>{
+    let itemTotal = c.price * c.qty;
+    totalPrice += itemTotal;
+
     cartList.innerHTML += `
-    <div class="bg-white rounded-xl shadow p-4 mb-3">
-        <b>${c.name}</b><br>
-        จำนวน: ${c.qty}<br>
-        หมายเหตุ: ${c.note || "-"}<br>
-        รวม: ${t} บาท
-    </div>  
+      <div class="bg-white rounded-xl shadow p-4 flex justify-between items-start gap-4">
+
+        <div>
+          <b>${c.name}</b><br>
+          จำนวน: ${c.qty}<br>
+          หมายเหตุ: ${c.note || "-"}<br>
+          รวม: <b>${itemTotal}</b> บาท
+        </div>
+
+        <button
+          onclick="removeFromCart(${index})"
+          class="text-red-600 hover:text-red-800 text-sm">
+          ลบ
+        </button>
+
+      </div>
     `;
   });
 
-  totalEl.innerText = "รวมทั้งหมด " + sum + " บาท";
+  totalEl.innerText = `รวมทั้งหมด ${totalPrice} บาท`;
 }
 
-function checkout(){
-  if(cart.length === 0) return alert("ตะกร้าว่าง");
-  showPage("payment");
-}
+
 
 function confirmPayment(){
+  if(cart.length === 0){
+    alert("ไม่มีสินค้าในตะกร้า");
+    return;
+  }
+
   let orders = JSON.parse(localStorage.getItem("orders") || "[]");
 
   orders.push({
     user: currentUser,
     items: cart,
-    date: new Date().toLocaleString("th-TH"),
-    status: "กำลังทำ"
+    total: totalPrice, // ⭐ บันทึกราคารวม
+    status: "กำลังทำ",
+    date: new Date().toLocaleString("th-TH")
   });
 
   localStorage.setItem("orders", JSON.stringify(orders));
+
   cart = [];
+  totalPrice = 0;
 
   alert("สั่งซื้อสำเร็จ 🎉");
   showPage("orders");
 }
+
+function removeFromCart(index){
+  cart.splice(index, 1);   // ลบสินค้า 1 รายการ
+  showCart();              // รีเฟรชตะกร้า + คำนวณราคาใหม่
+}
+
 
 /***************
  * CUSTOMER ORDERS
@@ -247,6 +275,7 @@ function loadCustomerOrders(){
     <div class="card">
       <b>เวลา:</b> ${o.date}<br>
       <b>สถานะ:</b> ${o.status}<br>
+      <b>ยอดรวม:</b> ${o.total} บาท
       <hr>
       ${o.items.map(i=>`${i.name} x${i.qty}`).join("<br>")}
     </div>`;
@@ -290,16 +319,35 @@ function loadAdminOrders(status){
 
   filtered.forEach(o=>{
     target.innerHTML += `
-    <div class="card">
-      <b>ลูกค้า:</b> ${o.user}<br>
-      <b>เวลา:</b> ${o.date}<br>
-      <hr>
-      ${o.items.map(i=>`${i.name} x${i.qty} (${i.note||"-"})`).join("<br>")}
-      <hr>
-      <button onclick="toggleOrderStatus('${o.date}')">
-        ${status==="กำลังทำ" ? "ทำเสร็จแล้ว" : "ย้อนกลับ"}
-      </button>
-    </div>`;
+  <div class="bg-white rounded-xl shadow p-4 space-y-2">
+    <div class="flex justify-between text-sm text-gray-600">
+      <span>ลูกค้า: <b>${o.user}</b></span>
+      <span>${o.date}</span>
+    </div>
+
+    <hr>
+
+    <div class="text-sm">
+      ${o.items.map(i =>
+        `${i.name} x${i.qty} (${i.note || "-"})`
+      ).join("<br>")}
+    </div>
+
+    <hr>
+
+    <button
+      onclick="toggleOrderStatus('${o.date}')"
+      class="w-full py-2 rounded-lg text-white font-semibold
+      ${status === "กำลังทำ"
+        ? "bg-green-600 hover:bg-green-700"
+        : "bg-orange-500 hover:bg-orange-600"}">
+      ${status === "กำลังทำ"
+        ? "ทำเสร็จแล้ว"
+        : "ย้อนกลับเป็นกำลังทำ"}
+    </button>
+  </div>
+`;
+
   });
 }
 
@@ -355,6 +403,18 @@ function showPage(page){
 
   document.getElementById(page).classList.remove("hidden");
 
-  if(page==="cart") showCart();
-  if(page==="orders") loadCustomerOrders(); // ✅ แก้ตรงนี้
+  if(page === "cart"){
+    showCart();
+  }
+
+  // ⭐⭐ ใส่ตรงนี้ ⭐⭐
+  if(page === "payment"){
+    document.getElementById("paymentTotal").innerText =
+      totalPrice + " บาท";
+  }
+
+  if(page === "orders"){
+    loadCustomerOrders();
+  }
 }
+

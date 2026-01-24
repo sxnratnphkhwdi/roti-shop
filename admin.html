@@ -8,24 +8,47 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#8b0000">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <header class="bg-red-600 text-white py-4 shadow-lg">
+  <div class="max-w-5xl mx-auto flex justify-between items-center px-4">
+    <h1 class="text-2xl font-bold">
+      เลิศรสโรตี – ระบบแอดมิน
+    </h1>
+    <button onclick="logout()"
+      class="bg-white text-red-600 px-4 py-2 rounded-lg text-sm font-semibold">
+      ออกจากระบบ
+    </button>
+  </div>
+</header>
+
 </head>
 <script> if ("serviceWorker" in navigator) { navigator.serviceWorker.register("service-worker.js"); } </script>
 
 <body onload="checkAdmin(); showAdminTab('doing'); loadOrders(); startAdminWatcher();"> <!-- ⭐⭐ ต้องมี loadOrders() -->
-  <header>
-    <h1>แอดมินร้าน เลิศรสโรตี</h1>
-    <nav> <button onclick="loadOrders()">รีเฟรช</button> <button onclick="logout()">ออกจากระบบ</button> </nav>
-  </header>
-  <div class="container">
-    <h2>จัดการคำสั่งซื้อ</h2>
-    <div class="tabs"> <button onclick="showAdminTab('doing')" id="tabDoing"> 🟡 กำลังทำ </button> <button
-        onclick="showAdminTab('done')" id="tabDone"> 🟢 เสร็จแล้ว </button> </div>
-    <div id="adminDoing"></div>
-    <div id="adminDone" class="hidden"></div>
+  <div class="max-w-5xl mx-auto mt-6 px-4">
+
+  <h2 class="text-xl font-bold mb-4 text-gray-800">
+    📋 จัดการคำสั่งซื้อ
+  </h2>
+
+  <div class="flex gap-2 mb-4">
+    <button id="tabDoing"
+      onclick="showAdminTab('doing')"
+      class="flex-1 py-2 rounded-lg bg-orange-500 text-white font-semibold">
+      ⏳ กำลังทำ
+    </button>
+
+    <button id="tabDone"
+      onclick="showAdminTab('done')"
+      class="flex-1 py-2 rounded-lg bg-green-600 text-white font-semibold">
+      ✅ เสร็จแล้ว
+    </button>
   </div>
-  <footer>
-    <p>โหมดแอดมิน</p>
-  </footer>
+
+  <div id="adminDoing" class="space-y-4"></div>
+  <div id="adminDone" class="space-y-4 hidden"></div>
+
+  </div>
+
   <script src="script.js"></script>
 </body>
 

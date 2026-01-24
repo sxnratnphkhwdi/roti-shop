@@ -10,7 +10,7 @@
 <header class="bg-red-700 text-white p-4 shadow-md sticky top-0 z-50">
   <div class="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
     <h1 class="text-2xl font-bold text-center sm:text-left">
-      🍌 เลิศรสโรตี
+      เลิศรสโรตี
     </h1>
 
     <nav class="flex justify-center gap-2 flex-wrap">
@@ -57,12 +57,49 @@ if("serviceWorker" in navigator){
 
 
 <!-- ชำระเงิน -->
-<div id="payment" class="hidden">
-<h2>ชำระเงิน</h2>
-<p>สแกน QR เพื่อชำระเงิน</p>
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PromptPay123456">
-<button onclick="confirmPayment()">ยืนยันชำระเงิน</button>
-</div>
+<section id="payment" class="hidden max-w-md mx-auto mt-6 px-4">
+  <div class="bg-white rounded-2xl shadow-lg p-6 text-center space-y-4">
+
+    <h2 class="text-2xl font-bold text-red-600">
+      ชำระเงิน
+    </h2>
+
+    <p class="text-gray-600 text-sm">
+      กรุณาสแกน QR เพื่อชำระเงิน
+    </p>
+
+    <!-- QR -->
+    <div class="flex justify-center">
+      <img src="qr.png" alt="QR Payment"
+        class="w-48 h-48 rounded-xl border shadow">
+    </div>
+
+    <!-- ยอดเงิน -->
+    <div class="bg-gray-100 rounded-lg p-3">
+      <p class="text-gray-700">ยอดที่ต้องชำระ</p>
+      <p id="paymentTotal"
+        class="text-2xl font-bold text-green-600">
+        0 บาท
+      </p>
+    </div>
+
+    <!-- ปุ่มยืนยัน -->
+    <button
+      onclick="confirmPayment()"
+      class="w-full bg-red-600 text-white py-3 rounded-xl font-semibold
+             hover:bg-red-700 transition">
+      ยืนยันการชำระเงิน
+    </button>
+
+    <button
+      onclick="showPage('cart')"
+      class="text-sm text-gray-500 hover:underline">
+      ← กลับไปแก้ไขตะกร้า
+    </button>
+
+  </div>
+</section>
+
 
 <!-- คำสั่งซื้อ -->
 <div id="orders" class="hidden">
