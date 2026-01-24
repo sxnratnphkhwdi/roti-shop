@@ -259,30 +259,101 @@ function removeFromCart(index){
  ***************/
 function loadCustomerOrders(){
   currentUser = localStorage.getItem("currentUser");
-  
-  let box = document.getElementById("orderList");
-  if(!box) return;
+
+  let activeBox = document.getElementById("orderActive");
+  let cancelBox = document.getElementById("orderCancel");
 
   let orders = JSON.parse(localStorage.getItem("orders") || "[]");
-  box.innerHTML = "";
+
+  activeBox.innerHTML = "";
+  cancelBox.innerHTML = "";
 
   let mine = orders.filter(o => o.user === currentUser);
+
   if(mine.length === 0){
-    box.innerHTML = "<p>ยังไม่มีคำสั่งซื้อ</p>";
+    activeBox.innerHTML = `<p class="text-center text-gray-500">ยังไม่มีคำสั่งซื้อ</p>`;
     return;
   }
 
-  mine.forEach(o=>{
-    box.innerHTML += `
-    <div class="card">
-      <b>เวลา:</b> ${o.date}<br>
-      <b>สถานะ:</b> ${o.status}<br>
-      <b>ยอดรวม:</b> ${o.total} บาท
-      <hr>
-      ${o.items.map(i=>`${i.name} x${i.qty}`).join("<br>")}
-    </div>`;
+  mine.reverse().forEach((o,index)=>{
+
+    let html = `
+      <div class="bg-white rounded-2xl shadow-md p-4 space-y-2">
+
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-red-600">📦 ออเดอร์</span>
+          <span class="text-sm text-gray-500">${o.date}</span>
+        </div>
+
+        <div class="text-sm space-y-1">
+          ${o.items.map(i=>`
+            <div class="flex justify-between">
+              <span>${i.name} × ${i.qty}</span>
+              <span>${i.price * i.qty} บาท</span>
+            </div>
+            ${i.note ? `<div class="text-xs text-gray-400 ml-2">หมายเหตุ: ${i.note}</div>` : ""}
+          `).join("")}
+        </div>
+
+        <hr>
+
+        <div class="flex justify-between items-center">
+          <span class="text-sm">
+            สถานะ:
+            <span class="px-2 py-1 rounded-full text-xs font-semibold
+              ${o.status === "กำลังทำ" ? "bg-orange-100 text-orange-700" :
+                o.status === "เสร็จแล้ว" ? "bg-green-100 text-green-700" :
+                "bg-gray-200 text-gray-600"}">
+              ${o.status}
+            </span>
+          </span>
+
+          <span class="text-lg font-bold text-green-600">
+            ${o.total} บาท
+          </span>
+        </div>
+    `;
+
+    // ปุ่มยกเลิก (เฉพาะกำลังทำ)
+    if(o.status === "กำลังทำ"){
+      html += `
+        <button
+          onclick="cancelOrder(${index})"
+          class="w-full mt-3 bg-gray-200 text-gray-700 py-2 rounded-xl hover:bg-gray-300">
+          ❌ ยกเลิกคำสั่งซื้อ
+        </button>
+      `;
+    }
+
+    html += `</div>`;
+
+    if(o.status === "ยกเลิก"){
+      cancelBox.innerHTML += html;
+    }else{
+      activeBox.innerHTML += html;
+    }
   });
+
+  showOrderTab("active");
 }
+
+
+function showOrderTab(tab){
+  document.getElementById("orderActive").classList.add("hidden");
+  document.getElementById("orderCancel").classList.add("hidden");
+
+  document.getElementById("tabActive").classList.remove("bg-red-600","text-white");
+  document.getElementById("tabCancel").classList.remove("bg-red-600","text-white");
+
+  if(tab === "active"){
+    document.getElementById("orderActive").classList.remove("hidden");
+    document.getElementById("tabActive").classList.add("bg-red-600","text-white");
+  }else{
+    document.getElementById("orderCancel").classList.remove("hidden");
+    document.getElementById("tabCancel").classList.add("bg-red-600","text-white");
+  }
+}
+
 
 /***************
  * ADMIN
@@ -337,16 +408,29 @@ function loadAdminOrders(status){
 
     <hr>
 
+    <div class="flex gap-2 mt-2">
+
+  <button
+    onclick="toggleOrderStatus('${o.date}')"
+    class="flex-1 py-2 rounded-lg text-white font-semibold
+    ${status === "กำลังทำ"
+      ? "bg-green-600 hover:bg-green-700"
+      : "bg-orange-500 hover:bg-orange-600"}">
+    ${status === "กำลังทำ"
+      ? "ทำเสร็จแล้ว"
+      : "ย้อนกลับ"}
+  </button>
+
+  ${status === "กำลังทำ" ? `
     <button
-      onclick="toggleOrderStatus('${o.date}')"
-      class="w-full py-2 rounded-lg text-white font-semibold
-      ${status === "กำลังทำ"
-        ? "bg-green-600 hover:bg-green-700"
-        : "bg-orange-500 hover:bg-orange-600"}">
-      ${status === "กำลังทำ"
-        ? "ทำเสร็จแล้ว"
-        : "ย้อนกลับเป็นกำลังทำ"}
+      onclick="rejectOrder('${o.date}')"
+      class="flex-1 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700">
+      ❌ ไม่รับออเดอร์
     </button>
+  ` : ""}
+
+</div>
+
   </div>
 `;
 
@@ -433,4 +517,32 @@ function checkout() {
     total + " บาท";
 
   showPage("payment");
+}
+
+function cancelOrder(index){
+  let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+
+  if(!confirm("ยืนยันยกเลิกคำสั่งซื้อ?")) return;
+
+  orders[index].status = "ยกเลิก";
+  localStorage.setItem("orders", JSON.stringify(orders));
+
+  alert("ยกเลิกคำสั่งซื้อเรียบร้อย");
+  loadCustomerOrders();
+}
+
+function rejectOrder(date){
+  if(!confirm("ยืนยันไม่รับออเดอร์นี้?")) return;
+
+  let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+  let index = orders.findIndex(o => o.date === date);
+
+  if(index === -1) return;
+
+  orders[index].status = "ยกเลิก";
+  localStorage.setItem("orders", JSON.stringify(orders));
+
+  alert("ออเดอร์ถูกยกเลิกแล้ว");
+
+  showAdminTab("doing"); // รีเฟรชหน้าจอ
 }

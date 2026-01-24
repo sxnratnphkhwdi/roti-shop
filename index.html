@@ -102,10 +102,36 @@ if("serviceWorker" in navigator){
 
 
 <!-- คำสั่งซื้อ -->
-<div id="orders" class="hidden">
-<h2>รายการคำสั่งซื้อ</h2>
-<div id="orderList"></div>
-</div>
+<section id="orders" class="hidden max-w-5xl mx-auto p-4">
+
+  <h2 class="text-2xl font-bold mb-4 text-red-600">
+    🧾 คำสั่งซื้อของคุณ
+  </h2>
+
+  <!-- Tabs -->
+  <div class="flex gap-2 mb-4">
+    <button
+      onclick="showOrderTab('active')"
+      id="tabActive"
+      class="flex-1 py-2 rounded-xl bg-red-600 text-white font-semibold">
+      📦 คำสั่งซื้อ
+    </button>
+
+    <button
+      onclick="showOrderTab('cancel')"
+      id="tabCancel"
+      class="flex-1 py-2 rounded-xl bg-gray-200 text-gray-700 font-semibold">
+      ❌ ยกเลิก
+    </button>
+  </div>
+
+  <!-- Order lists -->
+  <div id="orderActive" class="space-y-4"></div>
+  <div id="orderCancel" class="space-y-4 hidden"></div>
+
+</section>
+
+
 
 </div>
 
