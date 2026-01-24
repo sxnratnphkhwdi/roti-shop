@@ -171,7 +171,7 @@ function addCart(i){
   });
 
   localStorage.setItem("cart", JSON.stringify(cart));
-  
+
   alert("เพิ่มสินค้าแล้ว");
   qty[i] = 1;
   document.getElementById("qty"+i).innerText = 1;
@@ -249,10 +249,10 @@ function confirmPayment(){
 }
 
 function removeFromCart(index){
-  cart.splice(index, 1);   // ลบสินค้า 1 รายการ
-  showCart();              // รีเฟรชตะกร้า + คำนวณราคาใหม่
+  cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart)); // ⭐
+  showCart();
 }
-
 
 /***************
  * CUSTOMER ORDERS
@@ -418,16 +418,6 @@ function showPage(page){
   if(page === "orders"){
     loadCustomerOrders();
   }
-}
-
-function showPage(pageId) {
-  document.querySelectorAll("section, div[id]").forEach(el => {
-    if (el.id === pageId) {
-      el.classList.remove("hidden");
-    } else if (["menu","cart","payment","orders"].includes(el.id)) {
-      el.classList.add("hidden");
-    }
-  });
 }
 
 function checkout() {
