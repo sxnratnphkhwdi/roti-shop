@@ -179,6 +179,8 @@ function confirmPayment(){
  * CUSTOMER ORDERS
  ***************/
 function loadCustomerOrders(){
+  currentUser = localStorage.getItem("currentUser");
+  
   let box = document.getElementById("orderList");
   if(!box) return;
 
@@ -298,4 +300,12 @@ function startAdminWatcher(){
   },3000);
 }
 
-function showPage(page){ ["menu","cart","payment","orders"] .forEach(p=>document.getElementById(p).classList.add("hidden")); document.getElementById(page).classList.remove("hidden"); if(page==="cart") showCart(); if(page==="orders") loadOrders(); }
+function showPage(page){
+  ["menu","cart","payment","orders"]
+    .forEach(p=>document.getElementById(p).classList.add("hidden"));
+
+  document.getElementById(page).classList.remove("hidden");
+
+  if(page==="cart") showCart();
+  if(page==="orders") loadCustomerOrders(); // ✅ แก้ตรงนี้
+}

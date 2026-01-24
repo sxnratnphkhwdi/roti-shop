@@ -1,52 +1,32 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
-<meta charset="UTF-8">
-<title>แอดมิน | เลิศรสโรตี</title>
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#8b0000">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>แอดมิน | เลิศรสโรตี</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#8b0000">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("service-worker.js");
-}
-</script>
-<body onload="checkAdmin(); showAdminTab('doing'); startAdminWatcher();">
+<script> if ("serviceWorker" in navigator) { navigator.serviceWorker.register("service-worker.js"); } </script>
 
-
-<!-- ⭐⭐ ต้องมี loadOrders() -->
-
-<header>
-<h1>แอดมินร้าน เลิศรสโรตี</h1>
-<nav>
-<button onclick="loadOrders()">รีเฟรช</button>
-<button onclick="logout()">ออกจากระบบ</button>
-</nav>
-</header>
-
-<div class="container">
-  <h2>จัดการคำสั่งซื้อ</h2>
-
-  <div class="tabs">
-    <button onclick="showAdminTab('doing')" id="tabDoing">
-      🟡 กำลังทำ
-    </button>
-    <button onclick="showAdminTab('done')" id="tabDone">
-      🟢 เสร็จแล้ว
-    </button>
+<body onload="checkAdmin(); showAdminTab('doing'); loadOrders(); startAdminWatcher();"> <!-- ⭐⭐ ต้องมี loadOrders() -->
+  <header>
+    <h1>แอดมินร้าน เลิศรสโรตี</h1>
+    <nav> <button onclick="loadOrders()">รีเฟรช</button> <button onclick="logout()">ออกจากระบบ</button> </nav>
+  </header>
+  <div class="container">
+    <h2>จัดการคำสั่งซื้อ</h2>
+    <div class="tabs"> <button onclick="showAdminTab('doing')" id="tabDoing"> 🟡 กำลังทำ </button> <button
+        onclick="showAdminTab('done')" id="tabDone"> 🟢 เสร็จแล้ว </button> </div>
+    <div id="adminDoing"></div>
+    <div id="adminDone" class="hidden"></div>
   </div>
-
-  <div id="adminDoing"></div>
-  <div id="adminDone" class="hidden"></div>
-</div>
-
-
-<footer>
-<p>โหมดแอดมิน</p>
-</footer>
-
-<script src="script.js"></script>
+  <footer>
+    <p>โหมดแอดมิน</p>
+  </footer>
+  <script src="script.js"></script>
 </body>
+
 </html>
